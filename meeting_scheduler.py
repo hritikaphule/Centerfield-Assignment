@@ -2,32 +2,39 @@ def find_top_attendee(meetings):
    
     if not meetings:
         return None
-
+ 
     # Build deduplicated year sets per attendee
     attendee_years = {}
     for name, year in meetings:
         attendee_years.setdefault(name, set()).add(year)
-
+ 
     best_streak = 0
     streaks = {}
-
+ 
     for name, year_set in attendee_years.items():
-        sorted_years = sorted(year_set)
-        current_streak = 1
         max_streak = 1
-
-        for i in range(1, len(sorted_years)):
-            if sorted_years[i] - sorted_years[i - 1] == 2:
-                current_streak += 1
-                max_streak = max(max_streak, current_streak)
-            else:
-                current_streak = 1
-
+ 
+        for year in year_set:
+            # Only start counting from the beginning of a streak
+            if (year - 2) in year_set:
+                continue
+ 
+            # Walk forward by 2 until the chain breaks
+            current = year
+            length = 1
+            while (current + 2) in year_set:
+                current += 2
+                length += 1
+ 
+            if length > max_streak:
+                max_streak = length
+ 
         streaks[name] = max_streak
-        best_streak = max(best_streak, max_streak)
-
+        if max_streak > best_streak:
+            best_streak = max_streak
+ 
     winners = sorted(name for name, s in streaks.items() if s == best_streak)
-
+ 
     return winners[0] if len(winners) == 1 else winners
 
 
