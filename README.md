@@ -51,7 +51,7 @@ Finds the attendee(s) with the longest consecutive biennial conference streak (s
 
 ### Complexity
 
-- **Time:** O(n log n) — dominated by sorting each attendee's years
+- **Time:** O(n) — each year is visited at most once using the "longest consecutive sequence" set-lookup technique
 - **Space:** O(n) — stores all (name, year) pairs
 
 ---
