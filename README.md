@@ -10,17 +10,19 @@ Collects user-activity events into batches of a given size, then computes per-ba
 
 ### What I focused on beyond the basic requirements
 
-- **Remainder handling** — If the total events don't divide evenly into the batch size (e.g., 4 events with `buffer_size=3`), the leftover events are still processed instead of being silently dropped. In a real analytics pipeline you wouldn't want to lose data just because it didn't fill a buffer.
-- **Validation before buffering** — Invalid records (wrong type, missing keys, no `user_id` in metadata) are filtered out before they ever enter the buffer, so they can't corrupt batch calculations.
-- **Debug mode** — When `debug=True`, events are printed to stdout and the buffer is cleared without computing metrics, matching the spec's intent of swapping behavior.
+- Validation before buffering — Invalid records (wrong type, missing keys, no user_id in metadata) are filtered out before they ever enter the buffer, preventing corruption of batch calculations.
+
+- Debug mode — When debug=True, events are printed to stdout and the buffer is cleared without computing metrics, allowing inspection of raw data flow.
+
+- Clear batching behavior — The implementation processes only full batches. Any leftover events that do not fill the buffer are ignored. In a production system, this could be extended to flush remaining events to avoid data loss.
 
 ### Edge cases covered
 
-- Empty event list or `buffer_size <= 0` → returns `[]`
-- Buffer larger than event count → remainder is still flushed (1 result instead of 0)
-- All records invalid → returns `[]` without crashing
+- Empty event list or buffer_size <= 0 → returns []
+- Buffer larger than event count → no batch is processed, returns []
+- All records invalid → returns [] without crashing
 - Mix of valid and invalid records → only valid ones are buffered
-- All events from the same user → `unique_users = 1`
+- All events from the same user → unique_users = 1
 
 ### Complexity
 
