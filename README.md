@@ -38,7 +38,7 @@ Finds the attendee(s) with the longest consecutive biennial conference streak (s
 ### What I focused on beyond the basic requirements
 
 - **Deduplication with `set()`** — Duplicate `(name, year)` entries are collapsed at collection time so streak math is always accurate without needing a separate cleaning step.
-- **Input order doesn't matter** — Years are sorted per attendee before scanning, so the function works regardless of how the data comes in.
+- **Input order doesn't matter** — The solution uses a set for O(1) year lookup, so streak detection works without needing to sort the data.
 - **Deterministic tie-breaking** — When multiple people share the longest streak, names are returned in alphabetical order so the output is predictable and easy to test.
 
 ### Edge cases covered
